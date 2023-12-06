@@ -1,0 +1,933 @@
+{
+	"info": {
+		"_postman_id": "0c70ae77-63f7-4b71-8d39-13eec965c300",
+		"name": "2capcha",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15348665"
+	},
+	"item": [
+		{
+			"name": "Positiv tests",
+			"item": [
+				{
+					"name": "Get_challenge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var challenge = jsonData.challenge;\r",
+									"console.log(typeof challenge)\r",
+									"var gt = jsonData.gt;\r",
+									"pm.globals.set(\"challenge\", challenge);\r",
+									"pm.globals.set(\"gt\", gt);\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"The gt's lenght is 32\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.gt.length).to.eql(32);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The challenge's lenght is 32\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.challenge.length).to.eql(32);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"The number of keys in JSON responce\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(Object.keys(jsonData).length).to.eql(3);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"'Content-Type' is present in the header and type 'JSON'\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.eql(\"application/json; charset=utf-8\")\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Etag is present in the headers\", function () {\r",
+									"    pm.response.to.have.header(\"Etag\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"const schema= {\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\":{\r",
+									"        \"success\": {\"type\": \"integer\"},\r",
+									"        \"challenge\": {\"type\": \"string\"},\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"pm.test(\"Validating.schema\",()=>{\r",
+									"pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://2captcha.com/api/v1/captcha-demo/gee-test/init-params",
+							"protocol": "https",
+							"host": [
+								"2captcha",
+								"com"
+							],
+							"path": [
+								"api",
+								"v1",
+								"captcha-demo",
+								"gee-test",
+								"init-params"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sent Task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var resp = responseBody;\r",
+									"var res = Number(resp.split('|').pop());\r",
+									"pm.globals.set(\"task_id\", res);\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The type of response is string and the word 'OK' included in the response body\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"OK\")\r",
+									"    var resp = responseBody;\r",
+									"    pm.expect(typeof resp).to.eql(\"string\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The taskID's lenght is 11\", function () {\r",
+									"    var resp = responseBody;\r",
+									"    var res = resp.split('|').pop();\r",
+									"    pm.expect(res.length).to.eql(11);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 50ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(100);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://2captcha.com/in.php?key={{api_key_owner}}&method=geetest&gt={{gt}}&challenge={{challenge}}&api_server=api.geetest.com&pageurl=http://2captcha.com/demo/geetest",
+							"protocol": "https",
+							"host": [
+								"2captcha",
+								"com"
+							],
+							"path": [
+								"in.php"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{api_key_owner}}"
+								},
+								{
+									"key": "method",
+									"value": "geetest"
+								},
+								{
+									"key": "gt",
+									"value": "{{gt}}"
+								},
+								{
+									"key": "challenge",
+									"value": "{{challenge}}"
+								},
+								{
+									"key": "api_server",
+									"value": "api.geetest.com"
+								},
+								{
+									"key": "pageurl",
+									"value": "http://2captcha.com/demo/geetest"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task_Result_Processing",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The number of keys is 2 in JSON response\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(Object.keys(jsonData).length).to.eql(2);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The key 'status' included in the body\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"status\")\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"processing\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The key 'errorId' included in the body and errorId is 0\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"errorId\");\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorId).to.eql(0);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 100ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(150);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"clientKey\": \"{{api_key_owner}}\", \r\n   \"taskId\": {{task_id}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.2captcha.com/getTaskResult",
+							"protocol": "https",
+							"host": [
+								"api",
+								"2captcha",
+								"com"
+							],
+							"path": [
+								"getTaskResult"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task_Result after 15 min",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The number of keys is 3 in JSON response\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(Object.keys(jsonData).length).to.eql(3);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The key 'status' included in the body\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"errorCode\")\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorCode).to.eql(\"ERROR_NO_SUCH_CAPCHA_ID\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The key 'errorId' included in the body and this value is 16\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"errorId\");\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorId).to.eql(16);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 100ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(150);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"clientKey\": \"{{api_key_owner}}\", \r\n   \"taskId\": {{task_id}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.2captcha.com/getTaskResult",
+							"protocol": "https",
+							"host": [
+								"api",
+								"2captcha",
+								"com"
+							],
+							"path": [
+								"getTaskResult"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task_Result_Total",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The number of keys is 8 in JSON response \", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(Object.keys(jsonData).length).to.eql(8);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The key 'errorId' included in the body and errorId is 0\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"errorId\");\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorId).to.eql(0);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The key 'status' included in the body\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"status\")\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"ready\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The key 'solution' included in the body and has 3 included keys\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"solution\")\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(Object.keys(jsonData.solution).length).to.eql(3);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The key 'challenge' included in the 'solution' and the length is 34\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"challenge\")\r",
+									"    pm.expect(jsonData.solution.challenge.length).to.eql(34);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 100ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(150);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"clientKey\": \"{{api_key_owner}}\", \r\n   \"taskId\": {{task_id}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.2captcha.com/getTaskResult",
+							"protocol": "https",
+							"host": [
+								"api",
+								"2captcha",
+								"com"
+							],
+							"path": [
+								"getTaskResult"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Negative Tests",
+			"item": [
+				{
+					"name": "Sent Task Invalid api_key",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var resp = responseBody;\r",
+									"var res = Number(resp.split('|').pop());\r",
+									"pm.globals.set(\"task_id\", res);\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The type of response is string and the word 'key' included in the response body\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"OK\")\r",
+									"    var resp = responseBody;\r",
+									"    pm.expect(typeof resp).to.eql(\"string\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The taskID's lenght is 11\", function () {\r",
+									"    var resp = responseBody;\r",
+									"    var res = resp.split('|').pop();\r",
+									"    pm.expect(res.length).to.eql(11);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 50ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(100);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var api_key = pm.globals.get(\"api_key_owner\")\r",
+									"pm.globals.set(\"api_invalid\", api_key + \"123\");\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://2captcha.com/in.php?key={{api_invalid}}&method=geetest&gt={{gt_invalid}}&challenge={{challenge}}&api_server=api.geetest.com&pageurl=http://2captcha.com/demo/geetest",
+							"protocol": "https",
+							"host": [
+								"2captcha",
+								"com"
+							],
+							"path": [
+								"in.php"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{api_invalid}}"
+								},
+								{
+									"key": "method",
+									"value": "geetest"
+								},
+								{
+									"key": "gt",
+									"value": "{{gt_invalid}}"
+								},
+								{
+									"key": "challenge",
+									"value": "{{challenge}}"
+								},
+								{
+									"key": "api_server",
+									"value": "api.geetest.com"
+								},
+								{
+									"key": "pageurl",
+									"value": "http://2captcha.com/demo/geetest"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sent Task invalid gt",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The type of response is string and the word 'ERROR_GT' included in the response body\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"ERROR_GT\")\r",
+									"    var resp = responseBody;\r",
+									"    pm.expect(typeof resp).to.eql(\"string\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 50ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(100);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var gt = pm.globals.get(\"gt\");\r",
+									"pm.globals.set(\"gt_invalid\", gt + \"123\");\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://2captcha.com/in.php?key={{api_key_owner}}&method=geetest&gt={{gt_invalid}}&challenge={{challenge}}&api_server=api.geetest.com&pageurl=http://2captcha.com/demo/geetest",
+							"protocol": "https",
+							"host": [
+								"2captcha",
+								"com"
+							],
+							"path": [
+								"in.php"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{api_key_owner}}"
+								},
+								{
+									"key": "method",
+									"value": "geetest"
+								},
+								{
+									"key": "gt",
+									"value": "{{gt_invalid}}"
+								},
+								{
+									"key": "challenge",
+									"value": "{{challenge}}"
+								},
+								{
+									"key": "api_server",
+									"value": "api.geetest.com"
+								},
+								{
+									"key": "pageurl",
+									"value": "http://2captcha.com/demo/geetest"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sent Task invalid challenge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var resp = responseBody;\r",
+									"var res = Number(resp.split('|').pop());\r",
+									"pm.globals.set(\"task_id\", res);\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The type of response is string and the word 'OK' included in the response body\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"OK\")\r",
+									"    var resp = responseBody;\r",
+									"    pm.expect(typeof resp).to.eql(\"string\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The taskID's lenght is 11\", function () {\r",
+									"    var resp = responseBody;\r",
+									"    var res = resp.split('|').pop();\r",
+									"    pm.expect(res.length).to.eql(11);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 50ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(100);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var challenge = pm.globals.get(\"challenge\");\r",
+									"pm.globals.set(\"challenge_invalid\", challenge + \"123aaa\");\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://2captcha.com/in.php?key={{api_key_owner}}&method=geetest&gt={{gt}}&challenge={{challenge_invalid}}&api_server=api.geetest.com&pageurl=http://2captcha.com/demo/geetest",
+							"protocol": "https",
+							"host": [
+								"2captcha",
+								"com"
+							],
+							"path": [
+								"in.php"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{api_key_owner}}"
+								},
+								{
+									"key": "method",
+									"value": "geetest"
+								},
+								{
+									"key": "gt",
+									"value": "{{gt}}"
+								},
+								{
+									"key": "challenge",
+									"value": "{{challenge_invalid}}"
+								},
+								{
+									"key": "api_server",
+									"value": "api.geetest.com"
+								},
+								{
+									"key": "pageurl",
+									"value": "http://2captcha.com/demo/geetest"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task_Result_Invalid api_key",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The number of keys in JSON response\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(Object.keys(jsonData).length).to.eql(3);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"The key 'errorId' included in the body and errorId is 0\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"errorId\");\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorId).to.eql(1);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The key 'errorCode' included in the body\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"errorCode\")\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorCode).to.eql(\"ERROR_KEY_DOES_NOT_EXIST\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 100ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(150);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"clientKey\": \"{{api_key_invalid}}\", \r\n   \"taskId\": {{task_id}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.2captcha.com/getTaskResult",
+							"protocol": "https",
+							"host": [
+								"api",
+								"2captcha",
+								"com"
+							],
+							"path": [
+								"getTaskResult"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task_Result_Invalid taskID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"var challenge = jsonData.challenge;\r",
+									"var gt = jsonData.gt;\r",
+									"pm.globals.set(\"challenge\", challenge);\r",
+									"pm.globals.set(\"gt\", gt);\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"The gt's length is 32\", function () {\r",
+									"    pm.expect(jsonData.gt.length).to.eql(32);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The challenge's length is 32\", function () {\r",
+									"    pm.expect(jsonData.challenge.length).to.eql(32);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The number of keys in JSON response\", function () {\r",
+									"    pm.expect(Object.keys(jsonData).length).to.eql(3);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is present in the header\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    pm.expect(pm.response.headers[\"Content-Type\"]).to.eql(\"application/json; charset=utf-8\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Etag is present in the headers\", function () {\r",
+									"    pm.response.to.have.header(\"Etag\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var taskID = pm.globals.get(\"task_id\");\r",
+									"pm.globals.set(\"taskID_invalid\", taskID + \"123\");\r",
+									"invalid = pm.globals.get(\"taskID_invalid\");\r",
+									"console.log(invalid)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"clientKey\": \"{{api_key_owner}}\", \r\n   \"taskId\": {{task_id}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.2captcha.com/getTaskResult",
+							"protocol": "https",
+							"host": [
+								"api",
+								"2captcha",
+								"com"
+							],
+							"path": [
+								"getTaskResult"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "API_KEY_OWNER",
+			"value": "bddaa6af8dd11b69528197d790c99046"
+		},
+		{
+			"key": "API_KEY_OWNER",
+			"value": ""
+		},
+		{
+			"key": "ID",
+			"value": ""
+		},
+		{
+			"key": "API_KEY_WORKER",
+			"value": "f9f0711b55f1cda6f40be431c4a92148"
+		},
+		{
+			"key": "API_KEY_WORKER",
+			"value": ""
+		},
+		{
+			"key": "api_key_invalid",
+			"value": ""
+		}
+	]
+}
